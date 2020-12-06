@@ -2,13 +2,14 @@
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
-const { response, json } = require('express')
+const { response, json, static } = require('express')
 const { notStrictEqual } = require('assert')
 
 const app = express()
 
 app.use(express.json())
 app.use(cors())
+app.use(express.static('build'))
 morgan.token('custom', (req,res) => {
     
     if(req.method === "POST") {
