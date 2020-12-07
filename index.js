@@ -82,7 +82,7 @@ app.put('/api/persons/:id', (req,res,next) => {
         name: req.body.name,
         number: req.body.number,
     }
-    Person.findByIdAndUpdate(req.params.id, person, {new: true})
+    Person.findByIdAndUpdate(req.params.id, person, {new: true, runValidators: true})
     .then(result => {
         res.json(result)
     })
@@ -101,14 +101,7 @@ app.post('/api/persons', (req,res,next) => {
     
     const body = req.body
     console.log(body)
-    if(body === undefined) {
-        return res.status(400).json({error: 'content missing'})
-    }
-    if(!body.name){
-        return res.status(400).json({
-            error: 'name missing'
-        })
-    }
+    
 
     const newPerson = new Person({
         name: body.name,
@@ -126,29 +119,24 @@ app.post('/api/persons', (req,res,next) => {
     res.json(newPerson) */
 
 })
-const putError = (error, req,res,next) => {
-    if(req.body === undefined){
-    return res.status(400).json({error: 'content missing'})
-    }
-    if(!body.name){
-    return res.status(400).json({error: 'name missing'})
-    }
-    next(error)
-}
-app.use(putError)
 
-const unknownEndpoint = (error, request, response, next ) => {
+
+
+/* const unknownEndpoint = (error, request, response, next ) => {
     response.status(404).send({ error: 'unknown endpoint' })
     next(error)
   }
   
-  app.use(unknownEndpoint)
+  app.use(unknownEndpoint) */
 
 const errorHandler = (error, request, response, next) => {
     console.error(error.message)
   
     if (error.name === 'CastError') {
-      return response.status(400).send({ error: 'malformatted id' })
+      return response.status(400).send({error: 'malformatted id' })
+    }
+    if(error.name === 'ValidationError') {
+        return response.status(400).send({error: error.message})
     }
   
     next(error)
