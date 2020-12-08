@@ -71,7 +71,7 @@ app.delete('/api/persons/:id', (req,res,next) => {
     .then(result => {
       console.log(result)
 
-      res.status(204).end()
+      res.status(204).json(result).end()
     })
     .catch(error => next(error))
 })
